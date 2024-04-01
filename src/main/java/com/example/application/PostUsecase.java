@@ -1,7 +1,6 @@
 package com.example.application;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import com.example.domain.model.Post;
@@ -20,11 +19,15 @@ public class PostUsecase {
         this.postRepository = postRepository;
     }
 
-    public Post createPost(Post post) {
-        return postRepository.createPost(post);
+    public Post createPost(Post post) throws Exception {
+        Post created = postRepository.createPost(post);
+        if (created == null) {
+            throw new Exception("Post not created");
+        }
+        return created;
     }
 
-    public void deletePost(UUID id) throws NotFoundException{
+    public void deletePost(UUID id) throws NotFoundException {
         Post post = postRepository.getPost(id);
         if (post == null) {
             throw new NotFoundException("Post not found");
@@ -32,7 +35,7 @@ public class PostUsecase {
         postRepository.deletePost(id);
     }
 
-    public Post getPost(UUID id) throws NotFoundException{
+    public Post getPost(UUID id) throws NotFoundException {
         Post post = postRepository.getPost(id);
         if (post == null) {
             throw new NotFoundException("Post not found");

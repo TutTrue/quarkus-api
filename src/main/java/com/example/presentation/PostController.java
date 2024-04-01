@@ -1,14 +1,14 @@
 package com.example.presentation;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import com.example.application.PostUsecase;
 import com.example.domain.model.Post;
 import com.example.infrastructure.inMemory.InMemoryPostRepository;
+import com.example.infrastructure.panache.repository.PanachPostRepository;
 
-import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -23,12 +23,17 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PostController {
-    final private PostUsecase postUsecase =new PostUsecase(new InMemoryPostRepository());
+    final private PostUsecase postUsecase =new PostUsecase(new PanachPostRepository());
 
     @POST
+    @Transactional
     public Response createPost(Post post) {
-        postUsecase.createPost(post);
-        return Response.ok(post).build();
+        try {
+            Post createdPost = postUsecase.createPost(post);
+            return Response.ok(createdPost).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
     @GET
