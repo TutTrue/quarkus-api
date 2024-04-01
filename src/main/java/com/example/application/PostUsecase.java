@@ -9,6 +9,7 @@ import com.example.domain.repository.PostRepository;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.NotFoundException;
 
 @Singleton
 public class PostUsecase {
@@ -23,12 +24,20 @@ public class PostUsecase {
         return postRepository.createPost(post);
     }
 
-    public void deletePost(UUID id) {
+    public void deletePost(UUID id) throws NotFoundException{
+        Post post = postRepository.getPost(id);
+        if (post == null) {
+            throw new NotFoundException("Post not found");
+        }
         postRepository.deletePost(id);
     }
 
-    public Optional<Post> getPost(UUID id) {
-        return postRepository.getPost(id);
+    public Post getPost(UUID id) throws NotFoundException{
+        Post post = postRepository.getPost(id);
+        if (post == null) {
+            throw new NotFoundException("Post not found");
+        }
+        return post;
     }
 
     public List<Post> getPosts() {

@@ -7,7 +7,6 @@ import java.util.UUID;
 import com.example.application.PostUsecase;
 import com.example.domain.model.Post;
 import com.example.infrastructure.inMemory.InMemoryPostRepository;
-import com.example.infrastructure.panache.repository.PanachPostRepository;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -52,7 +51,11 @@ public class PostController {
     @GET
     @Path("/{id}")
     public Response getPost(@PathParam("id") UUID id) {
-        Optional<Post> post = postUsecase.getPost(id);
-        return Response.ok(post).build();
+        try {
+            Post post = postUsecase.getPost(id);
+            return Response.ok(post).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 }

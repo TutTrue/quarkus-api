@@ -24,18 +24,17 @@ public class InMemoryPostRepository implements PostRepository {
 
     @Override
     public void deletePost(UUID id) {
-        boolean deleted = posts.removeIf(post -> post.id.equals(id));
-        if (!deleted) throw new RuntimeException("Post not found");
+        posts.removeIf(post -> post.id.equals(id));
     }
 
     @Override
-    public Optional<Post> getPost(UUID id) {
+    public Post getPost(UUID id) {
         for (Post post : posts) {
             if (post.id.equals(id)) {
-                return Optional.of(post);
+                return post;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     @Override

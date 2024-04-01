@@ -27,16 +27,13 @@ public class PanachPostRepository implements PostRepository{
     @Override
     @Transactional
     public void deletePost(UUID id) {
-        long deleted = PanachePost.delete("id", id);
-        if (deleted == 0) {
-            throw new RuntimeException("Post not found");
-        }
+        PanachePost.delete("id", id);
     }
 
     @Override
-    public Optional<Post> getPost(UUID id) {
+    public Post getPost(UUID id) {
         PanachePost panachePost = PanachePost.findById(id);
-        return Optional.ofNullable(panachePost != null ? panachePost.toPost() : null);
+        return panachePost != null ? panachePost.toPost() : null;
     }
 
     @Override
