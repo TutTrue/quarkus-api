@@ -7,11 +7,15 @@ import com.example.application.PostUsecase;
 import com.example.domain.model.Post;
 import com.example.infrastructure.inMemory.InMemoryPostRepository;
 import com.example.infrastructure.panache.repository.PanachPostRepository;
+import com.example.presentation.Schema.Post.CreatePostReponse;
+import com.example.presentation.Schema.Post.GetAllPostResponse;
+import com.example.presentation.Schema.Post.GetPostResponse;
 
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -30,7 +34,7 @@ public class PostController {
     public Response createPost(Post post) {
         try {
             Post createdPost = postUsecase.createPost(post);
-            return Response.ok(createdPost).status(Response.Status.CREATED).build();
+            return Response.ok(new  CreatePostReponse(createdPost)).status(Response.Status.CREATED).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -39,17 +43,20 @@ public class PostController {
     @GET
     public Response getPosts() {
         List<Post> posts = postUsecase.getPosts();
-        return Response.ok(posts).build();
+        return Response.ok(new GetAllPostResponse(posts)).build();
     }
 
     @DELETE
     @Path("/{id}")
+    @Transactional
     public Response deletePost(@PathParam("id") UUID id) {
         try {
             postUsecase.deletePost(id);
             return Response.noContent().build();
-        } catch (Exception e) {
+        } catch (NotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -58,7 +65,7 @@ public class PostController {
     public Response getPost(@PathParam("id") UUID id) {
         try {
             Post post = postUsecase.getPost(id);
-            return Response.ok(post).build();
+            return Response.ok(new GetPostResponse(post)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

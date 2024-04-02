@@ -1,11 +1,9 @@
 package com.example.domain.model;
 
-import java.util.List;
 import java.util.UUID;
 
-public class Post {
+public class Comment {
     public UUID id;
-    public String title;
     public String content;
-    public List<Comment> comments;
+    public Post post;
 }
