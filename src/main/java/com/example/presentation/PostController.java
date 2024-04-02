@@ -23,16 +23,16 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PostController {
-    final private PostUsecase postUsecase =new PostUsecase(new PanachPostRepository());
+    final private PostUsecase postUsecase = new PostUsecase(new PanachPostRepository());
 
     @POST
     @Transactional
     public Response createPost(Post post) {
         try {
             Post createdPost = postUsecase.createPost(post);
-            return Response.ok(createdPost).build();
+            return Response.ok(createdPost).status(Response.Status.CREATED).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
